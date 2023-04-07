@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from source.source import Stream, Record, Source
+from src.source.source import Stream, Record, Source
 
 
 class ExampleStream(Stream):

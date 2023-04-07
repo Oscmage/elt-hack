@@ -3,8 +3,8 @@ import logging
 from collections import defaultdict
 from typing import Iterable
 
-from destination.destination import Destination
-from source.source import Record, Source, Stream
+from src.destination.destination import Destination
+from src.source.source import Record, Source, Stream
 
 logger = logging.getLogger(__name__)
 

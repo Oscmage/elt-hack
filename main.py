@@ -2,7 +2,7 @@ import logging
 
 from destination.example.example import ExampleDestination
 from source.example.example import ExampleSource
-from workflow.workflow import Workflow, Workflows
+from workflow.workflow import Workflows, Workflow
 
 if __name__ == "__main__":
     # setup logging to console stdout

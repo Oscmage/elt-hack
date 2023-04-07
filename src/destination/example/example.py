@@ -1,6 +1,6 @@
 from typing import Any, Iterable
 
-from destination.destination import Destination
+from src.destination.destination import Destination
 
 
 class ExampleDestination(Destination):
