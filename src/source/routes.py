@@ -4,7 +4,8 @@ from typing import Callable
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from src.source.source import Record, Source
+from src.common.record import Record
+from src.source.source import Source
 from src.source.source import Stream
 
 

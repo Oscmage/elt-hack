@@ -1,15 +1,20 @@
-from typing import Any, Iterable
+from typing import Iterable
 
+from src.common.record import Record
 from src.destination.destination import Destination
 
 
 class ExampleDestination(Destination):
-    def write_records(self, records: Iterable[Any]):
+    def write_records(self, records: Iterable[Record]):
         for record in records:
-            print(f"Writing record: {record}")
+            print(f"Writing record: {record.data}")
 
-    def check_connection(self) -> bool:
+    def healthcheck(self) -> bool:
         return True
 
     def close(self):
         pass
+
+
+def create():
+    return ExampleDestination()

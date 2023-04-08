@@ -23,7 +23,7 @@ class Workflow:
         self._destination = destination
 
     def run(self):
-        if not self._destination.check_connection():
+        if not self._destination.healthcheck():
             raise Exception("Destination connection failed")
 
         for stream in self._source.streams():

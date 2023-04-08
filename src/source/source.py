@@ -1,12 +1,7 @@
-import dataclasses
 from abc import ABC
-from typing import Iterable, Any
+from typing import Iterable
 
-
-@dataclasses.dataclass
-class Record:
-    checkpoint: str
-    data: Any
+from src.common.record import Record
 
 
 class Stream(ABC):

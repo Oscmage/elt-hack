@@ -1,12 +1,14 @@
 from abc import ABC
 from typing import Iterable, Any
 
+from src.common.record import Record
+
 
 class Destination(ABC):
-    def write_records(self, records: Iterable[Any]):
+    def write_records(self, records: Iterable[Record]):
         raise NotImplementedError()
 
-    def check_connection(self) -> bool:
+    def healthcheck(self) -> bool:
         raise NotImplementedError()
 
     def close(self):
