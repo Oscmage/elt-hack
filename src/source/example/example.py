@@ -21,3 +21,7 @@ class ExampleStream(Stream):
 class ExampleSource(Source):
     def streams(self) -> Iterable[Stream]:
         return [ExampleStream()]
+
+
+def create():
+    return ExampleSource()
