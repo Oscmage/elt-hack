@@ -9,6 +9,8 @@ from src.source.source import Source
 
 app = FastAPI()
 
+SOURCE_PORT = 8000
+
 
 def start():
     # TODO: Add support for sending in configuration when starting the server to the source
@@ -17,7 +19,7 @@ def start():
     get_source: Callable[[], Source] = getattr(example_module, "create")
     register_routes(app=app, get_source=get_source)
 
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=SOURCE_PORT)
 
 
 if __name__ == "__main__":

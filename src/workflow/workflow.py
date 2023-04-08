@@ -1,10 +1,10 @@
 import dataclasses
+import json
 import logging
 from collections import defaultdict
-from typing import Iterable
+from http import HTTPStatus
 
-from src.destination.destination import Destination
-from src.source.source import Record, Source, Stream
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -16,53 +16,48 @@ class StreamState:
 
 
 class Workflow:
-    def __init__(self, source: Source, destination: Destination, batch_size: int = 2):
+    def __init__(self, batch_size: int = 2):
         self._batch_size = batch_size
         self._stream_states: defaultdict[str, StreamState] = defaultdict(StreamState)
-        self._source = source
-        self._destination = destination
 
     def run(self):
-        if not self._destination.healthcheck():
-            raise Exception("Destination connection failed")
+        source_healthcheck = requests.get("http://localhost:8000/api/v1/healthcheck")
+        source_healthcheck.raise_for_status()
 
-        for stream in self._source.streams():
-            if not stream.check_connection():
-                raise Exception("Source connection failed")
+        destination_healthcheck = requests.get(
+            "http://localhost:8001/api/v1/healthcheck"
+        )
+        destination_healthcheck.raise_for_status()
 
-            self._read_and_write(stream)
+        streams_response = requests.get("http://localhost:8000/api/v1/streams")
+        streams_response.raise_for_status()
+        stream_names = streams_response.json()["streams"]
+        for stream_name in stream_names:
+            self._read_and_write(stream_name=stream_name)
 
-        logger.info("Completed reading and writing all streams, closing destination...")
-        self._destination.close()
-        logger.info("Destination closed")
-
-    def _read_and_write(self, stream: Stream):
+    def _read_and_write(self, stream_name: str):
         logger.info(
-            "Starting reading stream: %s and writing to destination: %s",
-            stream.name(),
-            self._destination.name(),
+            "Starting reading stream: %s",
+            stream_name,
         )
 
-        records: Iterable[Record] = stream.read_records()
-        batch = []
-        for i, record in enumerate(records, start=1):
-            batch.append(record.data)
-            if i % self._batch_size == 0:
-                self._destination.write_records(batch)
-                logger.info("Reached checkpoint %s", record.checkpoint)
-                self._stream_states[stream.name()].last_checkpoint = record.checkpoint
-                batch = []
+        while True:
+            # TODO: Fix so that we return multiple records here instead of just one
+            record_response = requests.get(
+                f"http://localhost:8000/api/v1/streams/{stream_name}/next"
+            )
+            record_response.raise_for_status()
+            if record_response.status_code == HTTPStatus.NO_CONTENT:
+                break
 
-        # Write the final remaining records
-        if batch:
-            self._destination.write_records(batch)
+            record = record_response.json()
+            destination_response = requests.post(
+                "http://localhost:8001/api/v1/streams/write",
+                data=json.dumps([record]),
+            )
+            destination_response.raise_for_status()
 
-        logger.info(
-            "Completed reading stream %s and writing to destination %s",
-            stream.name(),
-            self._destination.name(),
-        )
-        self._stream_states[stream.name()].completed = True
+        self._stream_states[stream_name].completed = True
 
 
 class Workflows:

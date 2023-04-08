@@ -1,7 +1,5 @@
 import logging
 
-from destination.example.example import ExampleDestination
-from source.example.example import ExampleSource
 from workflow.workflow import Workflows, Workflow
 
 if __name__ == "__main__":
@@ -13,7 +11,7 @@ if __name__ == "__main__":
 
     workflows = Workflows(
         ws=[
-            Workflow(source=ExampleSource(), destination=ExampleDestination()),
+            Workflow(),
         ]
     )
     workflows.run()

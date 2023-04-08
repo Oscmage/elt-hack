@@ -9,6 +9,8 @@ from src.destination.routes import register_routes
 
 app = FastAPI()
 
+DESTINATION_PORT = 8001
+
 
 def start():
     # TODO: Add support for sending in configuration when starting the server to the source
