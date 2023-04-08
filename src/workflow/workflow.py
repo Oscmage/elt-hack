@@ -52,6 +52,7 @@ class Workflow:
 
             record = record_response.json()
             destination_response = requests.post(
+                # TODO: Fix the naming of this endpoint to instead be per stream
                 "http://localhost:8001/api/v1/streams/write",
                 data=json.dumps([record]),
             )
