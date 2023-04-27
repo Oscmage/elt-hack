@@ -12,10 +12,10 @@ app = FastAPI()
 SOURCE_PORT = 8000
 
 
-def start():
+def start(source: str = "src.source.example.example"):
     # TODO: Add support for sending in configuration when starting the server to the source
     # TODO: Take source module as an argument on startup
-    example_module = importlib.import_module("src.source.example.example")
+    example_module = importlib.import_module(source)
     get_source: Callable[[], Source] = getattr(example_module, "create")
     register_routes(app=app, get_source=get_source)
 
